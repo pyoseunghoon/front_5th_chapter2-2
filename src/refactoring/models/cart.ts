@@ -8,7 +8,7 @@ export const calculateItemTotal = (item: CartItem) => {
   const discountRate = getMaxApplicableDiscount(item);
 
   // 상품의 할인된 가격
-  const itemTotal = item.product.price * discountRate * item.quantity;
+  const itemTotal = item.product.price * (1 - discountRate) * item.quantity;
 
   return itemTotal;
 };
