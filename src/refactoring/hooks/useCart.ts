@@ -42,8 +42,15 @@ export const useCart = () => {
    * @param newQuantity
    */
   const updateQuantity = (productId: string, newQuantity: number) => {
-    const updatedCart = updateCartItemQuantity(cart, productId, newQuantity);
-    setCart(updatedCart);
+    // 외부 상태 참조하여 업데이트.. 문제 발생
+    // const updatedCart = updateCartItemQuantity(cart, productId, newQuantity);
+    // setCart(updatedCart);
+
+    // react의 useState 상태 업데이트는 비동기적이고 큐(queue) 기반으로 처리되기 때문에
+    // 외부 참조는 최신의 상태값이 아닐 수 있음.. ==> 따라서 함수형 업데이트를 해야함
+    setCart((prevCart) =>
+      updateCartItemQuantity(prevCart, productId, newQuantity),
+    );
   };
 
   /**
