@@ -100,6 +100,16 @@ export const updateCartItemQuantity = (
   productId: string,
   newQuantity: number,
 ): CartItem[] => {
+  /*
+    상품의 재고 이상으로 장바구니에 선택 불가 하도록 onClick에서 제어
+    이유는 updateCartItemQuantity 함수를 타는 순간 useState의 변경으로 불필요한 렌더링이 발생함.
+  */
+
+  // 수량 0 일시 장바구니에서 제거
+  if (newQuantity === 0) {
+    return cart.filter((item) => item.product.id !== productId);
+  }
+
   return cart.map((item) =>
     item.product.id === productId ? { ...item, quantity: newQuantity } : item,
   );
