@@ -128,9 +128,7 @@ export const CartPage = ({ products, coupons }: Props) => {
                   <div>
                     <button
                       onClick={() =>
-                        item.product.stock >= item.quantity - 1
-                          ? updateQuantity(item.product.id, item.quantity - 1)
-                          : () => {}
+                        updateQuantity(item.product.id, item.quantity - 1)
                       }
                       className="bg-gray-300 text-gray-800 px-2 py-1 rounded mr-1 hover:bg-gray-400"
                     >
@@ -138,9 +136,7 @@ export const CartPage = ({ products, coupons }: Props) => {
                     </button>
                     <button
                       onClick={() =>
-                        item.product.stock >= item.quantity + 1
-                          ? updateQuantity(item.product.id, item.quantity + 1)
-                          : () => {}
+                        updateQuantity(item.product.id, item.quantity + 1)
                       }
                       className="bg-gray-300 text-gray-800 px-2 py-1 rounded mr-1 hover:bg-gray-400"
                     >
