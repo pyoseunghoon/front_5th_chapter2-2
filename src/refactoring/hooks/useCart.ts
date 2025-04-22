@@ -23,11 +23,24 @@ export const useCart = () => {
     }
   };
 
-  const removeFromCart = (productId: string) => {};
+  // 장바구니 내역의 상품 제거
+  const removeFromCart = (productId: string) => {
+    setCart((prev) => prev.filter((p) => p.product.id !== productId));
+  };
 
-  const updateQuantity = (productId: string, newQuantity: number) => {};
+  // 장바구니 내역의 상품 수량 변경
+  const updateQuantity = (productId: string, newQuantity: number) => {
+    setCart((prev) =>
+      prev.map((p) =>
+        p.product.id === productId ? { ...p, quantity: newQuantity } : p,
+      ),
+    );
+  };
 
-  const applyCoupon = (coupon: Coupon) => {};
+  // 장바구니 내역의 쿠폰 적용
+  const applyCoupon = (coupon: Coupon) => {
+    setSelectedCoupon(coupon);
+  };
 
   const calculateTotal = () => ({
     totalBeforeDiscount: 0,
