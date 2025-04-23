@@ -1,5 +1,5 @@
-import { useCouponAddHandler } from '../hooks/useCouponAddHandler.ts';
-import { Coupon } from '../../types.ts';
+import { useCouponAddHandler } from '../../hooks/useCouponAddHandler.ts';
+import { Coupon } from '../../../types.ts';
 
 interface Props {
   onCouponAdd: (newCoupon: Coupon) => void;

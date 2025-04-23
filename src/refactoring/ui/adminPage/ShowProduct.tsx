@@ -1,7 +1,7 @@
-import { Product } from '../../types.ts';
+import { Product } from '../../../types.ts';
 import { EditProduct } from './EditProduct.tsx';
-import { useOpenProductForm } from '../hooks/useOpenProductForm.ts';
-import { useEditProductForm } from '../hooks/useEditProductForm.ts';
+import { useOpenProductForm } from '../../hooks/useOpenProductForm.ts';
+import { useEditProductForm } from '../../hooks/useEditProductForm.ts';
 
 interface Props {
   product: Product;

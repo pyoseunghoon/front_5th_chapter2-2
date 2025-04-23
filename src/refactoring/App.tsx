@@ -1,5 +1,5 @@
-import { CartPage } from './ui/CartPage.tsx';
-import { AdminPage } from './ui/AdminPage.tsx';
+import { CartPage } from './ui/userPage/CartPage.tsx';
+import { AdminPage } from './ui/adminPage/AdminPage.tsx';
 import { Coupon, Product } from '../types.ts';
 import { useCoupons, useProducts } from './hooks';
 import { Nav } from './ui/Nav.tsx';

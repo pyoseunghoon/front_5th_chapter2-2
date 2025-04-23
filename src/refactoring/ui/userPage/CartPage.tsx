@@ -1,5 +1,5 @@
-import { CartItem, Coupon, Product } from '../../types.ts';
-import { useCart } from '../hooks';
+import { CartItem, Coupon, Product } from '../../../types.ts';
+import { useCart } from '../../hooks';
 
 interface Props {
   products: Product[];
@@ -45,6 +45,7 @@ export const CartPage = ({ products, coupons }: Props) => {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">장바구니</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* 상품 목록 */}
         <div>
           <h2 className="text-2xl font-semibold mb-4">상품 목록</h2>
           <div className="space-y-2">
@@ -102,9 +103,12 @@ export const CartPage = ({ products, coupons }: Props) => {
             })}
           </div>
         </div>
+
+        {/* 장바구니 내역 */}
         <div>
           <h2 className="text-2xl font-semibold mb-4">장바구니 내역</h2>
 
+          {/* 장바구니 내역 - 장바구니 목록 */}
           <div className="space-y-2">
             {cart.map((item) => {
               const appliedDiscount = getAppliedDiscount(item);
@@ -154,6 +158,7 @@ export const CartPage = ({ products, coupons }: Props) => {
             })}
           </div>
 
+          {/* 장바구니 내역 - 쿠폰 적용 */}
           <div className="mt-6 bg-white p-4 rounded shadow">
             <h2 className="text-2xl font-semibold mb-2">쿠폰 적용</h2>
             <select
@@ -181,6 +186,7 @@ export const CartPage = ({ products, coupons }: Props) => {
             )}
           </div>
 
+          {/* 장바구니 내역 - 주문 요약 */}
           <div className="mt-6 bg-white p-4 rounded shadow">
             <h2 className="text-2xl font-semibold mb-2">주문 요약</h2>
             <div className="space-y-1">

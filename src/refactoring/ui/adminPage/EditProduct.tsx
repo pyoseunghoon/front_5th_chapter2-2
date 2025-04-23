@@ -1,6 +1,6 @@
-import { Product } from '../../types.ts';
+import { Product } from '../../../types.ts';
 import { EditDiscount } from './EditDiscount.tsx';
-import { useProdcutEditHandler } from '../hooks/useProdcutEditHandler.ts';
+import { useProdcutEditHandler } from '../../hooks/useProdcutEditHandler.ts';
 
 interface Props {
   product: Product;

@@ -1,6 +1,6 @@
 import { AddDiscount } from './AddDiscount.tsx';
-import { Product } from '../../types.ts';
-import { removeDiscountFromProduct } from '../models/product.ts';
+import { Product } from '../../../types.ts';
+import { removeDiscountFromProduct } from '../../models/product.ts';
 
 interface Props {
   newProduct: Product;

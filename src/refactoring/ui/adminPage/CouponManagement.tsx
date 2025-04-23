@@ -1,4 +1,4 @@
-import { Coupon } from '../../types.ts';
+import { Coupon } from '../../../types.ts';
 import { AddCoupon } from './AddCoupon.tsx';
 import { ShowCoupon } from './ShowCoupon.tsx';
 

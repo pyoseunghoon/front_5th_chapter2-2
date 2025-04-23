@@ -1,6 +1,6 @@
-import { Product } from '../../types.ts';
-import { useNewProductForm } from '../hooks/useNewProductForm.ts';
-import { useProductAddHandler } from '../hooks/useProductAddHandler.ts';
+import { Product } from '../../../types.ts';
+import { useNewProductForm } from '../../hooks/useNewProductForm.ts';
+import { useProductAddHandler } from '../../hooks/useProductAddHandler.ts';
 
 interface Props {
   onProductAdd: (newProduct: Product) => void;

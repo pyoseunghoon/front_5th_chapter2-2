@@ -1,5 +1,5 @@
 import { AddProduct } from './AddProduct.tsx';
-import { Product } from '../../types.ts';
+import { Product } from '../../../types.ts';
 import { ShowProduct } from './ShowProduct.tsx';
 
 interface Props {

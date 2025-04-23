@@ -1,4 +1,4 @@
-import { Coupon } from '../../types.ts';
+import { Coupon } from '../../../types.ts';
 
 interface Props {
   coupon: Coupon;

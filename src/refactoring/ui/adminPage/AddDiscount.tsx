@@ -1,6 +1,6 @@
-import { useDiscount } from '../hooks/useDiscount.ts';
-import { updateDiscountToProduct } from '../models/product.ts';
-import { Product } from '../../types.ts';
+import { useDiscount } from '../../hooks/useDiscount.ts';
+import { updateDiscountToProduct } from '../../models/product.ts';
+import { Product } from '../../../types.ts';
 
 interface Props {
   editingProduct: Product;
