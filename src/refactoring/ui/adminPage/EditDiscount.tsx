@@ -1,6 +1,7 @@
 import { AddDiscount } from './AddDiscount.tsx';
 import { Product } from '../../../types.ts';
 import { removeDiscountFromProduct } from '../../models/product.ts';
+import { getPercentage } from '../../models/util.ts';
 
 interface Props {
   newProduct: Product;
@@ -27,7 +28,8 @@ export const EditDiscount = ({
       {editingProduct.discounts.map((discount, index) => (
         <div key={index} className="flex justify-between items-center mb-2">
           <span>
-            {discount.quantity}개 이상 구매 시 {discount.rate * 100}% 할인
+            {discount.quantity}개 이상 구매 시 {getPercentage(discount.rate)}%
+            할인
           </span>
           <button
             onClick={() => handleRemoveDiscount(index)}

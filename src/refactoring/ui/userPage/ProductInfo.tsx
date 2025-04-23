@@ -1,5 +1,9 @@
 import { Product } from '../../../types.ts';
-import { formatFixed, getLocaleString } from '../../models/util.ts';
+import {
+  formatFixed,
+  getLocaleString,
+  getPercentage,
+} from '../../models/util.ts';
 import { hasProductDiscounts } from '../../models/product.ts';
 import { getMaxDiscountRate } from '../../models/discount.ts';
 
@@ -30,8 +34,12 @@ export const ProductInfo = ({ product, remainingStock, addToCart }: Props) => {
         </span>
         {hasProductDiscounts(product.discounts) && (
           <span className="ml-2 font-medium text-blue-600">
-            최대 {formatFixed(getMaxDiscountRate(product.discounts) * 100, 0)}%
-            할인
+            최대{' '}
+            {formatFixed(
+              getPercentage(getMaxDiscountRate(product.discounts)),
+              0,
+            )}
+            % 할인
           </span>
         )}
       </div>
@@ -39,8 +47,8 @@ export const ProductInfo = ({ product, remainingStock, addToCart }: Props) => {
         <ul className="list-disc list-inside text-sm text-gray-500 mb-2">
           {product.discounts.map((discount, index) => (
             <li key={index}>
-              {discount.quantity}개 이상: {formatFixed(discount.rate * 100, 0)}%
-              할인
+              {discount.quantity}개 이상:{' '}
+              {formatFixed(getPercentage(discount.rate), 0)}% 할인
             </li>
           ))}
         </ul>

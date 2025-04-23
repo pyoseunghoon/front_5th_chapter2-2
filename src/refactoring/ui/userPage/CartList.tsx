@@ -3,7 +3,7 @@ import {
   getMaxApplicableDiscount,
   hasAppliedDiscount,
 } from '../../models/cart.ts';
-import { formatFixed } from '../../models/util.ts';
+import { formatFixed, getPercentage } from '../../models/util.ts';
 
 interface Props {
   cart: CartItem[];
@@ -29,7 +29,8 @@ export const CartList = ({ cart, removeFromCart, updateQuantity }: Props) => {
                 {item.product.price}원 x {item.quantity}
                 {hasAppliedDiscount(appliedDiscount) && (
                   <span className="text-green-600 ml-1">
-                    ({formatFixed(appliedDiscount * 100, 0)}% 할인 적용)
+                    ({formatFixed(getPercentage(appliedDiscount), 0)}% 할인
+                    적용)
                   </span>
                 )}
               </span>

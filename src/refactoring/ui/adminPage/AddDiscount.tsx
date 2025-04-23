@@ -1,6 +1,7 @@
 import { useDiscount } from '../../hooks/useDiscount.ts';
 import { updateDiscountToProduct } from '../../models/product.ts';
 import { Product } from '../../../types.ts';
+import { getPercentage } from '../../models/util.ts';
 
 interface Props {
   editingProduct: Product;
@@ -39,7 +40,7 @@ export function AddDiscount({
       <input
         type="number"
         placeholder="할인율 (%)"
-        value={newDiscount.rate * 100}
+        value={getPercentage(newDiscount.rate)}
         onChange={(e) =>
           updateDiscountField('rate', parseInt(e.target.value) / 100)
         }

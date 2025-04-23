@@ -2,6 +2,7 @@ import { Product } from '../../../types.ts';
 import { EditProduct } from './EditProduct.tsx';
 import { useOpenProductForm } from '../../hooks/useOpenProductForm.ts';
 import { useEditProductForm } from '../../hooks/useEditProductForm.ts';
+import { getPercentage } from '../../models/util.ts';
 
 interface Props {
   product: Product;
@@ -42,8 +43,8 @@ export const ShowProduct = ({ product, index, onProductUpdate }: Props) => {
                 {product.discounts.map((discount, index) => (
                   <div key={index} className="mb-2">
                     <span>
-                      {discount.quantity}개 이상 구매 시 {discount.rate * 100}%
-                      할인
+                      {discount.quantity}개 이상 구매 시{' '}
+                      {getPercentage(discount.rate)}% 할인
                     </span>
                   </div>
                 ))}

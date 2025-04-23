@@ -3,7 +3,32 @@ import { describe, expect, test } from 'vitest';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { CartPage } from '../../refactoring/ui/userPage/CartPage.tsx';
 import { AdminPage } from '../../refactoring/ui/adminPage/AdminPage.tsx';
-import { Coupon, Product } from '../../types';
+import { Coupon, Discount, Product } from '../../types';
+import {
+  formatFixed,
+  getLocaleString,
+  getPercentage,
+} from '../../refactoring/models/util.ts';
+import {
+  hasProductDiscounts,
+  removeDiscountFromProduct,
+  updateDiscountToProduct,
+} from '../../refactoring/models/product.ts';
+import {
+  defaultDiscount,
+  getMaxDiscountRate,
+} from '../../refactoring/models/discount.ts';
+import {
+  defaultCouponForm,
+  getDiscountValue,
+} from '../../refactoring/models/coupon.ts';
+import {
+  calculateCartTotal,
+  calculateItemTotal,
+  getMaxApplicableDiscount,
+  hasAppliedDiscount,
+  updateCartItemQuantity,
+} from '../../refactoring/models/cart.ts';
 
 const mockProducts: Product[] = [
   {
@@ -264,12 +289,178 @@ describe('advanced > ', () => {
   });
 
   describe('자유롭게 작성해보세요.', () => {
-    test('새로운 유틸 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-      expect(true).toBe(false);
+    describe('util 함수 테스트', () => {
+      test('getLocaleString 함수는 숫자를 로케일 문자열로 변환한다.', () => {
+        expect(getLocaleString(260000)).toBe('260,000');
+        expect(getLocaleString(0)).toBe('0');
+        expect(getLocaleString(-1000)).toBe('-1,000');
+      });
+
+      test('getPercentage 함수는 소수를 백분율 숫자로 변환한다.', () => {
+        expect(getPercentage(0.1)).toBe(10);
+        expect(getPercentage(0)).toBe(0);
+        expect(getPercentage(1)).toBe(100);
+        expect(getPercentage(-0.25)).toBe(-25);
+      });
+
+      test('formatFixed 함수는 소수를 고정된 소수점 자리수로 문자열 변환한다.', () => {
+        expect(formatFixed(12.3456, 2)).toBe('12.35');
+        expect(formatFixed(1, 3)).toBe('1.000');
+        expect(formatFixed(0.1 + 0.2, 1)).toBe('0.3'); // JS 부동소수점 테스트
+        expect(formatFixed(-5.6789, 1)).toBe('-5.7');
+      });
     });
 
-    test('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-      expect(true).toBe(false);
+    describe('product 유틸 함수 테스트', () => {
+      const mockProduct: Product = {
+        id: 'p1',
+        name: '상품1',
+        price: 10000,
+        stock: 10,
+        discounts: [
+          { quantity: 5, rate: 0.1 },
+          { quantity: 10, rate: 0.2 },
+        ],
+      };
+
+      test('hasProductDiscounts는 할인 배열이 비어있는지 여부를 반환한다', () => {
+        expect(hasProductDiscounts(mockProduct.discounts)).toBe(true);
+        expect(hasProductDiscounts([])).toBe(false);
+      });
+
+      test('removeDiscountFromProduct는 특정 인덱스의 할인만 제거한다', () => {
+        const updated = removeDiscountFromProduct(mockProduct, 0);
+        expect(updated.discounts).toHaveLength(1);
+        expect(updated.discounts[0]).toEqual({ quantity: 10, rate: 0.2 });
+      });
+
+      test('updateDiscountToProduct는 새로운 할인을 추가한다', () => {
+        const newDiscount: Discount = { quantity: 20, rate: 0.3 };
+        const updated = updateDiscountToProduct(mockProduct, newDiscount);
+        expect(updated.discounts).toHaveLength(3);
+        expect(updated.discounts[2]).toEqual(newDiscount);
+      });
     });
+
+    describe('discount 유틸 함수 테스트', () => {
+      test('defaultDiscount는 기본 할인 객체를 제공한다', () => {
+        expect(defaultDiscount).toEqual({ quantity: 0, rate: 0 });
+      });
+
+      test('getMaxDiscountRate는 최대 할인율을 반환한다', () => {
+        const discounts: Discount[] = [
+          { quantity: 5, rate: 0.1 },
+          { quantity: 10, rate: 0.3 },
+          { quantity: 20, rate: 0.2 },
+        ];
+        expect(getMaxDiscountRate(discounts)).toBe(0.3);
+      });
+
+      test('getMaxDiscountRate는 빈 배열이면 0을 반환한다', () => {
+        expect(getMaxDiscountRate([])).toBe(0);
+      });
+    });
+
+    describe('coupon 유틸 함수 테스트', () => {
+      test('defaultCouponForm은 빈 쿠폰 양식으로 초기화된다', () => {
+        expect(defaultCouponForm).toEqual({
+          name: '',
+          code: '',
+          discountType: 'percentage',
+          discountValue: 0,
+        });
+      });
+
+      test('getDiscountValue는 할인 타입에 따라 문자열을 반환한다', () => {
+        const amountCoupon: Coupon = {
+          name: '금액쿠폰',
+          code: 'AMOUNT1000',
+          discountType: 'amount',
+          discountValue: 10000,
+        };
+
+        const percentCoupon: Coupon = {
+          name: '비율쿠폰',
+          code: 'PERCENT5',
+          discountType: 'percentage',
+          discountValue: 15,
+        };
+
+        expect(getDiscountValue(amountCoupon)).toBe('10000원');
+        expect(getDiscountValue(percentCoupon)).toBe('15%');
+      });
+    });
+
+    describe('cart 유틸 함수 테스트', () => {
+      const product = {
+        id: 'p1',
+        name: '상품1',
+        price: 10000,
+        stock: 10,
+        discounts: [
+          { quantity: 1, rate: 0.1 },
+          { quantity: 5, rate: 0.2 },
+        ],
+      };
+
+      const cartItem = { product, quantity: 5 };
+
+      test('getMaxApplicableDiscount는 최대 적용 가능한 할인율을 반환한다', () => {
+        expect(getMaxApplicableDiscount(cartItem)).toBe(0.2);
+      });
+
+      test('calculateItemTotal는 수량과 할인율을 반영한 총액을 계산한다', () => {
+        expect(calculateItemTotal(cartItem)).toBe(10000 * 0.8 * 5); // 20% 할인
+      });
+
+      test('hasAppliedDiscount는 할인 여부를 판단한다', () => {
+        expect(hasAppliedDiscount(0.1)).toBe(true);
+        expect(hasAppliedDiscount(0)).toBe(false);
+      });
+
+      test('calculateCartTotal은 쿠폰이 없을 때 올바른 금액을 계산한다', () => {
+        const cart = [cartItem];
+        const result = calculateCartTotal(cart, null);
+        expect(result.totalBeforeDiscount).toBe(50000);
+        expect(result.totalAfterDiscount).toBe(40000);
+        expect(result.totalDiscount).toBe(10000);
+      });
+
+      test('calculateCartTotal은 금액 쿠폰 적용 시 올바른 할인 금액을 반환한다', () => {
+        const cart = [cartItem];
+        const result = calculateCartTotal(cart, {
+          discountType: 'amount',
+          discountValue: 5000,
+          name: '',
+          code: '',
+        });
+        expect(result.totalAfterDiscount).toBe(35000);
+        expect(result.totalDiscount).toBe(15000);
+      });
+
+      test('updateCartItemQuantity는 수량 변경을 정확히 처리한다', () => {
+        const cart = [cartItem];
+        const updated = updateCartItemQuantity(cart, 'p1', 3);
+        expect(updated[0].quantity).toBe(3);
+      });
+
+      test('updateCartItemQuantity는 수량 0일 경우 장바구니에서 제거한다', () => {
+        const cart = [cartItem];
+        const updated = updateCartItemQuantity(cart, 'p1', 0);
+        expect(updated).toHaveLength(0);
+      });
+
+      test('updateCartItemQuantity는 재고보다 많은 수량을 입력하면 최대 재고로 설정한다', () => {
+        const cart = [cartItem];
+        const updated = updateCartItemQuantity(cart, 'p1', 100);
+        expect(updated[0].quantity).toBe(10); // 재고 제한
+      });
+    });
+
+    // describe('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
+    //   // test('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
+    //   //   expect(true).toBe(false);
+    //   // });
+    // });
   });
 });

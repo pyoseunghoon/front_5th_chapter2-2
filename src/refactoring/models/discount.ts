@@ -7,6 +7,6 @@ export const defaultDiscount: Discount = {
 
 export const getMaxDiscountRate = (
   discounts: { quantity: number; rate: number }[],
-) => {
+): number => {
   return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
 };
