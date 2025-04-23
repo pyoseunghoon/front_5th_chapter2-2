@@ -1,5 +1,5 @@
 // useCart.ts
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { CartItem, Coupon, Product } from '../../types';
 import { calculateCartTotal, updateCartItemQuantity } from '../models/cart';
 
@@ -12,54 +12,62 @@ export const useCart = () => {
    * 상품 장바구니 담기
    * @param product
    */
-  const addToCart = (product: Product) => {
-    const isInCart = cart.some((p) => p.product.id === product.id);
-
-    if (isInCart) {
-      // 기존에 장바구니에 있는 상품 추가
-      setCart((prev) =>
-        prev.map((p) =>
-          p.product.id === product.id ? { ...p, quantity: p.quantity + 1 } : p,
-        ),
+  const addToCart = useCallback((product: Product) => {
+    setCart((prev) => {
+      const cart = [...prev];
+      const cartIndex = cart.findIndex(
+        (item) => item.product.id === product.id,
       );
-    } else {
+
+      // 기존에 장바구니에 있는 상품 추가
+      if (cartIndex !== -1) {
+        const item = cart[cartIndex];
+        // 이미 UI에서 제어하지만 재고 이상 선택 불가하도록 추가
+        const quantity = Math.min(item.quantity + 1, product.stock);
+        cart[cartIndex] = { ...item, quantity };
+        return cart;
+      }
+
       // 기존에 장바구니에 없던 상품 추가
-      setCart((prev) => [...prev, { product, quantity: 1 }]);
-    }
-  };
+      return [...cart, { product, quantity: 1 }];
+    });
+  }, []);
 
   /**
    * 장바구니 내역의 상품 제거
    * @param productId
    */
-  const removeFromCart = (productId: string) => {
-    setCart((prev) => prev.filter((p) => p.product.id !== productId));
-  };
+  const removeFromCart = useCallback((productId: string) => {
+    setCart((prevCart) => updateCartItemQuantity(prevCart, productId, 0));
+  }, []);
 
   /**
    * 장바구니 내역의 상품 수량 변경
    * @param productId
    * @param newQuantity
    */
-  const updateQuantity = (productId: string, newQuantity: number) => {
-    // 외부 상태 참조하여 업데이트.. 문제 발생
-    // const updatedCart = updateCartItemQuantity(cart, productId, newQuantity);
-    // setCart(updatedCart);
+  const updateQuantity = useCallback(
+    (productId: string, newQuantity: number) => {
+      // 외부 상태 참조하여 업데이트.. 문제 발생
+      // const updatedCart = updateCartItemQuantity(cart, productId, newQuantity);
+      // setCart(updatedCart);
 
-    // react의 useState 상태 업데이트는 비동기적이고 큐(queue) 기반으로 처리되기 때문에
-    // 외부 참조는 최신의 상태값이 아닐 수 있음.. ==> 따라서 함수형 업데이트를 해야함
-    setCart((prevCart) =>
-      updateCartItemQuantity(prevCart, productId, newQuantity),
-    );
-  };
+      // react의 useState 상태 업데이트는 비동기적이고 큐(queue) 기반으로 처리되기 때문에
+      // 외부 참조는 최신의 상태값이 아닐 수 있음.. ==> 따라서 함수형 업데이트를 해야함
+      setCart((prevCart) =>
+        updateCartItemQuantity(prevCart, productId, newQuantity),
+      );
+    },
+    [],
+  );
 
   /**
    * 장바구니 내역의 쿠폰 적용
    * @param coupon
    */
-  const applyCoupon = (coupon: Coupon) => {
+  const applyCoupon = useCallback((coupon: Coupon) => {
     setSelectedCoupon(coupon);
-  };
+  }, []);
 
   /**
    * 장바구니 상품 최종 가격 계산
