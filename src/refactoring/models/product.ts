@@ -7,6 +7,10 @@ export const defaultProduct = {
   discounts: [],
 };
 
+export const hasProductDiscounts = (value) => {
+  return value.length > 0;
+};
+
 export const removeDiscountFromProduct = (product: Product, discountIndex) => {
   const filteredDiscounts = product.discounts.filter(
     (_, idx) => idx !== discountIndex,

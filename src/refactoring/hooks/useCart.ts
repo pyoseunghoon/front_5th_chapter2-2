@@ -42,6 +42,15 @@ export const useCart = () => {
   }, []);
 
   /**
+   * 상품의 남은 재고
+   * @param product
+   */
+  const getRemainingStock = (product: Product) => {
+    const cartItem = cart.find((item) => item.product.id === product.id);
+    return product.stock - (cartItem?.quantity || 0);
+  };
+
+  /**
    * 장바구니 내역의 상품 수량 변경
    * @param productId
    * @param newQuantity
@@ -78,6 +87,7 @@ export const useCart = () => {
     cart,
     addToCart,
     removeFromCart,
+    getRemainingStock,
     updateQuantity,
     applyCoupon,
     calculateTotal,
