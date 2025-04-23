@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { describe, expect, test } from 'vitest';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  renderHook,
+  screen,
+  within,
+} from '@testing-library/react';
 import { CartPage } from '../../refactoring/ui/userPage/CartPage.tsx';
 import { AdminPage } from '../../refactoring/ui/adminPage/AdminPage.tsx';
 import { Coupon, Discount, Product } from '../../types';
@@ -29,6 +36,7 @@ import {
   hasAppliedDiscount,
   updateCartItemQuantity,
 } from '../../refactoring/models/cart.ts';
+import { useLocalStorage } from '../../refactoring/hooks/useLocalStorage.ts';
 
 const mockProducts: Product[] = [
   {
@@ -457,10 +465,32 @@ describe('advanced > ', () => {
       });
     });
 
-    // describe('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-    //   // test('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-    //   //   expect(true).toBe(false);
-    //   // });
-    // });
+    describe('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
+      describe('useLocalStorage 테스트', () => {
+        test('getItem 저장되고 잘 가져오는지 확인', () => {
+          const { result } = renderHook(() => useLocalStorage());
+
+          act(() => {
+            result.current.setItem('products', mockProducts);
+          });
+
+          expect(result.current.getItem('products')).toEqual(mockProducts);
+        });
+
+        test('removeLocalStorage 저장되고 잘 제거되는지 확인', () => {
+          const { result } = renderHook(() => useLocalStorage());
+
+          act(() => {
+            result.current.setItem('products', mockProducts);
+          });
+
+          act(() => {
+            result.current.removeItem('products');
+          });
+
+          expect(result.current.getItem('products')).toBeNull();
+        });
+      });
+    });
   });
 });

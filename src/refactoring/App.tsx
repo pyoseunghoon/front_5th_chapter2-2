@@ -5,11 +5,20 @@ import { Nav } from './ui/Nav.tsx';
 import { useNav } from './hooks/useNav.ts';
 import { initialProducts } from './models/product.ts';
 import { initialCoupons } from './models/coupon.ts';
+import { useLocalStorage } from './hooks/useLocalStorage.ts';
 
 const App = () => {
-  const { products, updateProduct, addProduct } = useProducts(initialProducts);
-  const { coupons, addCoupon } = useCoupons(initialCoupons);
   const { isAdmin, switchPage } = useNav(false);
+
+  const { getItem, setItem } = useLocalStorage();
+  setItem('products', initialProducts);
+  setItem('coupons', initialCoupons);
+
+  const { products, updateProduct, addProduct } = useProducts(
+    getItem('products'),
+  );
+
+  const { coupons, addCoupon } = useCoupons(getItem('coupons'));
 
   return (
     <div className="min-h-screen bg-gray-100">
