@@ -1,6 +1,6 @@
 import { AddProduct } from './AddProduct.tsx';
 import { Product } from '../../types.ts';
-import { ShowProduct } from './showProduct.tsx';
+import { ShowProduct } from './ShowProduct.tsx';
 
 interface Props {
   products: Product[];
