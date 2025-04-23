@@ -14,7 +14,7 @@ export const calculateItemTotal = (item: CartItem) => {
  * 적용가능한 상품의 최대 할인율 제공
  * @param item
  */
-export const getMaxApplicableDiscount = (item: CartItem) => {
+export const getMaxApplicableDiscount = (item: CartItem): number => {
   // 상품에 적용 가능한 할인율
   const applicableDiscountRates = item.product.discounts
     .filter((d) => d.quantity <= item.quantity)
@@ -25,6 +25,10 @@ export const getMaxApplicableDiscount = (item: CartItem) => {
   }
 
   return Math.max(...applicableDiscountRates);
+};
+
+export const hasAppliedDiscount = (discounts: number) => {
+  return discounts > 0;
 };
 
 /**
