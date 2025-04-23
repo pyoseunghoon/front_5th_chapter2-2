@@ -37,6 +37,7 @@ import {
   updateCartItemQuantity,
 } from '../../refactoring/models/cart.ts';
 import { useLocalStorage } from '../../refactoring/hooks/useLocalStorage.ts';
+import { useProductSearch } from '../../refactoring/hooks/useProductSearch.ts';
 
 const mockProducts: Product[] = [
   {
@@ -187,6 +188,21 @@ describe('advanced > ', () => {
       expect(screen.getByText('상품 금액: 700,000원')).toBeInTheDocument();
       expect(screen.getByText('할인 금액: 115,000원')).toBeInTheDocument();
       expect(screen.getByText('최종 결제 금액: 585,000원')).toBeInTheDocument();
+
+      // 13. 상품 검색시 필터링된 상품만 표시된다
+      const searchInput = screen.getByPlaceholderText('상품명 검색');
+      fireEvent.change(searchInput, { target: { value: '상품2' } });
+
+      expect(screen.queryByTestId('product-p1')).not.toBeInTheDocument();
+      expect(screen.getByTestId('product-p2')).toBeInTheDocument();
+      expect(screen.queryByTestId('product-p3')).not.toBeInTheDocument();
+
+      // 14. 검색어 초기화 시 전체 상품 다시 표시되는지 확인
+      fireEvent.change(searchInput, { target: { value: '  ' } });
+
+      expect(screen.getByTestId('product-p1')).toBeInTheDocument();
+      expect(screen.getByTestId('product-p2')).toBeInTheDocument();
+      expect(screen.getByTestId('product-p3')).toBeInTheDocument();
     });
 
     test('관리자 페이지 테스트 > ', async () => {
@@ -489,6 +505,34 @@ describe('advanced > ', () => {
           });
 
           expect(result.current.getItem('products')).toBeNull();
+        });
+      });
+
+      describe('useProductSearch 테스트', () => {
+        test('초기에는 전체 상품을 반환한다', () => {
+          const { result } = renderHook(() => useProductSearch(mockProducts));
+          expect(result.current.filteredProducts).toHaveLength(3);
+        });
+
+        test('검색어에 해당하는 상품만 필터링된다', () => {
+          const { result } = renderHook(() => useProductSearch(mockProducts));
+
+          act(() => {
+            result.current.setKeyword('상품1');
+          });
+
+          expect(result.current.filteredProducts).toHaveLength(1);
+          expect(result.current.filteredProducts[0].name).toBe('상품1');
+        });
+
+        test('공백만 입력하면 전체 상품이 나온다', () => {
+          const { result } = renderHook(() => useProductSearch(mockProducts));
+
+          act(() => {
+            result.current.setKeyword('   ');
+          });
+
+          expect(result.current.filteredProducts).toHaveLength(3);
         });
       });
     });
