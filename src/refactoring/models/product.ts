@@ -34,11 +34,14 @@ export const defaultProduct = {
   discounts: [],
 };
 
-export const hasProductDiscounts = (value) => {
+export const hasProductDiscounts = (value: Discount[]) => {
   return value.length > 0;
 };
 
-export const removeDiscountFromProduct = (product: Product, discountIndex) => {
+export const removeDiscountFromProduct = (
+  product: Product,
+  discountIndex: number,
+) => {
   const filteredDiscounts = product.discounts.filter(
     (_, idx) => idx !== discountIndex,
   );

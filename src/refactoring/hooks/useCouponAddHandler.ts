@@ -2,7 +2,9 @@ import { useCallback, useState } from 'react';
 import { Coupon } from '../../types.ts';
 import { defaultCouponForm } from '../models/coupon.ts';
 
-export const useCouponAddHandler = (onCouponAdd) => {
+export const useCouponAddHandler = (
+  onCouponAdd: (newCoupon: Coupon) => void,
+) => {
   const [newCoupon, setNewCoupon] = useState<Coupon>(defaultCouponForm);
 
   const updateNewCoupon = useCallback(

@@ -9,7 +9,7 @@ export const useProductSearch = (products: Product[]) => {
   // 디바운스 함수 생성 (setFilteredProducts 내부에서 필터링 실행)
   const debouncedFilter = useMemo(
     () =>
-      debounce<(keyword: string) => void>((nextKeyword: string) => {
+      debounce((nextKeyword: string) => {
         if (!nextKeyword.trim()) {
           setFilteredProducts(products);
         } else {

@@ -1,10 +1,10 @@
 import { AddDiscount } from './AddDiscount.tsx';
-import { Product } from '../../../types.ts';
+import { Discount, Product } from '../../../types.ts';
 import { removeDiscountFromProduct } from '../../models/product.ts';
 import { getPercentage } from '../../models/util.ts';
 
 interface Props {
-  newProduct: Product;
+  editingProduct: Product;
   setEditingProduct: (
     value: ((prevState: Product) => Product) | Product,
   ) => void;
@@ -25,7 +25,7 @@ export const EditDiscount = ({
   return (
     <div>
       <h4 className="text-lg font-semibold mb-2">할인 정보</h4>
-      {editingProduct.discounts.map((discount, index) => (
+      {editingProduct.discounts.map((discount: Discount, index: number) => (
         <div key={index} className="flex justify-between items-center mb-2">
           <span>
             {discount.quantity}개 이상 구매 시 {getPercentage(discount.rate)}%

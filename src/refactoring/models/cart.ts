@@ -42,7 +42,7 @@ export const calculateCartTotal = (
   selectedCoupon: Coupon | null,
 ) => {
   // 장비구니 상품들의 할인되기전 총 금액
-  const totalBeforeDiscount = cart.reduce(
+  const totalBeforeDiscount: number = cart.reduce(
     (prevItem, currentItem) =>
       prevItem + currentItem.quantity * currentItem.product.price,
     0,
@@ -55,17 +55,20 @@ export const calculateCartTotal = (
   );
 
   // 할인율 쿠폰 적용시 할인 금액
-  const getCouponDiscountByPercentage = (total, discountValue) => {
+  const getCouponDiscountByPercentage = (
+    total: number,
+    discountValue: number,
+  ) => {
     return total * (1 - discountValue / 100);
   };
 
   // 금액 쿠폰 적용시 할인 금액
-  const getCouponDiscountByAmount = (total, discountValue) => {
+  const getCouponDiscountByAmount = (total: number, discountValue: number) => {
     return Math.max(total - discountValue, 0);
   };
 
   // 쿠폰 적용된 할인 금액
-  const getCouponDiscountAppliedTotal = (coupon, total) => {
+  const getCouponDiscountAppliedTotal = (coupon: Coupon, total: number) => {
     if (coupon.discountType === 'amount') {
       return getCouponDiscountByAmount(total, coupon.discountValue);
     }
@@ -76,17 +79,18 @@ export const calculateCartTotal = (
   };
 
   // 할인된 최종 금액
-  const totalAfterDiscount = selectedCoupon
-    ? getCouponDiscountAppliedTotal(selectedCoupon, totalAfterItemDiscount)
+  const totalAfterDiscount: number = selectedCoupon
+    ? (getCouponDiscountAppliedTotal(selectedCoupon, totalAfterItemDiscount) ??
+      totalAfterItemDiscount)
     : totalAfterItemDiscount;
 
   // 할인된 금액
-  const totalDiscount = totalBeforeDiscount - totalAfterDiscount;
+  const totalDiscount: number = totalBeforeDiscount - totalAfterDiscount;
 
   return {
-    totalBeforeDiscount: totalBeforeDiscount,
-    totalAfterDiscount: totalAfterDiscount,
-    totalDiscount: totalDiscount,
+    totalBeforeDiscount: totalBeforeDiscount ?? 0,
+    totalAfterDiscount: totalAfterDiscount ?? 0,
+    totalDiscount: totalDiscount ?? 0,
   };
 };
 

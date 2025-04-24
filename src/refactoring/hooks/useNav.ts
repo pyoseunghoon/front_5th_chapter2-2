@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 export const useNav = (initialStatus: boolean) => {
   const [isAdmin, setIsAdmin] = useState(initialStatus);
