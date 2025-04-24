@@ -6,6 +6,7 @@ import {
   render,
   renderHook,
   screen,
+  waitFor,
   within,
 } from '@testing-library/react';
 import { CartPage } from '../../refactoring/ui/userPage/CartPage.tsx';
@@ -185,7 +186,8 @@ describe('basic > ', () => {
 
       fireEvent.click(screen.getByText('추가'));
 
-      const $product4 = screen.getByTestId('product-4');
+      const $product4 = await waitFor(() => screen.getByTestId('product-4'));
+      // const $product4 = screen.getByTestId('product-4');
 
       expect($product4).toHaveTextContent('상품4');
       expect($product4).toHaveTextContent('15000원');
@@ -210,9 +212,11 @@ describe('basic > ', () => {
 
       fireEvent.click(within($product1).getByText('수정 완료'));
 
-      expect($product1).toHaveTextContent('수정된 상품1');
-      expect($product1).toHaveTextContent('12000원');
-      expect($product1).toHaveTextContent('재고: 25');
+      await waitFor(() => {
+        expect($product1).toHaveTextContent('수정된 상품1');
+        expect($product1).toHaveTextContent('12000원');
+        expect($product1).toHaveTextContent('재고: 25');
+      });
 
       // 3. 상품 할인율 추가 및 삭제
       fireEvent.click($product1);
