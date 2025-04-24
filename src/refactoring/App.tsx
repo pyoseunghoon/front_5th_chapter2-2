@@ -6,6 +6,7 @@ import { useNav } from './hooks/useNav.ts';
 import { initialProducts } from './models/product.ts';
 import { initialCoupons } from './models/coupon.ts';
 import { useLocalStorage } from './hooks/useLocalStorage.ts';
+import { Coupon, Product } from '../types.ts';
 
 const App = () => {
   const { isAdmin, switchPage } = useNav(false);
@@ -15,10 +16,10 @@ const App = () => {
   setItem('coupons', initialCoupons);
 
   const { products, updateProduct, addProduct } = useProducts(
-    getItem('products'),
+    getItem('products') as Product[],
   );
 
-  const { coupons, addCoupon } = useCoupons(getItem('coupons'));
+  const { coupons, addCoupon } = useCoupons(getItem('coupons') as Coupon[]);
 
   return (
     <div className="min-h-screen bg-gray-100">

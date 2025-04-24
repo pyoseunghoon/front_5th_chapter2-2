@@ -8,13 +8,24 @@ interface Props {
 
 export const AddProduct = ({ onProductAdd }: Props) => {
   const { showNewProductForm, updateShowFormFlag } = useNewProductForm(false);
-  const { newProduct, updateNewProduct, handleAddNewProduct } =
-    useProductAddHandler(onProductAdd, updateShowFormFlag);
+  const {
+    newProduct,
+    updateNewProduct,
+    handleAddNewProduct,
+    resetForm,
+    showSnackbar,
+  } = useProductAddHandler(onProductAdd, updateShowFormFlag);
 
   return (
     <>
       <button
-        onClick={() => updateShowFormFlag(!showNewProductForm)}
+        onClick={() => {
+          if (showNewProductForm) {
+            // '취소' 버튼 일 때 클릭시, 임시 저장된 데이터 제거
+            resetForm();
+          }
+          updateShowFormFlag(!showNewProductForm);
+        }}
         className="bg-green-500 text-white px-4 py-2 rounded mb-4 hover:bg-green-600"
       >
         {showNewProductForm ? '취소' : '새 상품 추가'}
@@ -77,6 +88,12 @@ export const AddProduct = ({ onProductAdd }: Props) => {
           >
             추가
           </button>
+        </div>
+      )}
+
+      {showSnackbar && (
+        <div className="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg z-50 animate-fade-in-out">
+          입력 내용이 자동 저장되었습니다
         </div>
       )}
     </>
